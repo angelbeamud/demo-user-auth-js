@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f2f5;
+    }
+
+    .container {
+      max-width: 400px;
+      width: 100%;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      background: white;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .toggle-btn {
+      background: none;
+      color: #007BFF;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-align: center;
+      width: 100%;
+      display: block;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2 id="formTitle">Login</h2>
+    <form id="loginForm">
+      <label for="usernameLogin">Username:</label>
+      <input type="text" id="usernameLogin" name="usernameLogin" required>
+      <label for="loginPassword">Password:</label>
+      <input type="password" id="loginPassword" name="password" required>
+      <button type="submit">Login</button>
+      <button type="button" class="toggle-btn" onclick="toggleForms()">Don't have an account? Register here</button>
+    </form>
+
+    <form id="registerForm" style="display: none;">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+      <label for="registerPassword">Password:</label>
+      <input type="password" id="registerPassword" name="password" required>
+      <button type="submit">Register</button>
+      <button type="button" class="toggle-btn" onclick="toggleForms()">Already have an account? Login here</button>
+    </form>
+  </div>
+
+  <script>
+    function toggleForms() {
+      var loginForm = document.getElementById('loginForm');
+      var registerForm = document.getElementById('registerForm');
+      var formTitle = document.getElementById('formTitle');
+
+      if (loginForm.style.display === 'none') {
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+        formTitle.textContent = 'Login';
+      } else {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        formTitle.textContent = 'Register';
+      }
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const username = document.getElementById('usernameLogin').value;
+      const password = document.getElementById('loginPassword').value;
+
+      fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+        .then(response => response.text())
+        .then(data => {
+          alert(data);
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('registerPassword').value;
+
+      fetch('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username, password })
+      })
+        .then(response => {
+          if (response.ok) {
+            window.location.href= '/protected'
+          }else{
+            window.location.href = '/index'
+          }
+        })
+        .then(data => {
+          alert(data);
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
+  </script>
+</body>
+
+</html>
